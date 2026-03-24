@@ -10,9 +10,7 @@ async function getLabelId(auth, labelName) {
   );
 
   if (!match) {
-    console.log('\nAvailable labels:');
-    labels.forEach((l) => console.log(' -', l.name));
-    throw new Error(`Label "${labelName}" not found in your Gmail.`);
+    throw new Error(`Label "${labelName}" not found. Please connect your email first.`);
   }
 
   return match.id;

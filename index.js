@@ -1,4 +1,5 @@
 const { authenticate } = require('./auth');
+const { setupGmail } = require('./setup');
 const { fetchLabeledEmails } = require('./gmail');
 
 async function main() {
@@ -6,6 +7,7 @@ async function main() {
   console.log('====================================\n');
 
   const auth = await authenticate();
+  await setupGmail(auth);
   await fetchLabeledEmails(auth, 'Obai');
 }
 
