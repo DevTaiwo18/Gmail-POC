@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 
 const LABEL_NAME = 'Obai';
-const FILTER_SUBJECT = 'New Claim Created';
+const FILTER_QUERY = '(from:cccis.com OR from:vistaclaim.com OR from:ianetwork.net OR from:acdcorp.com OR from:claimleader.com) AND (subject:(New Claim) OR subject:Assignment)';
 
 async function getOrCreateLabel(gmail) {
   const res = await gmail.users.labels.list({ userId: 'me' });
@@ -35,7 +35,7 @@ async function getOrCreateFilter(gmail, labelId) {
 
   const existing = filters.find(
     (f) =>
-      f.criteria?.subject === FILTER_SUBJECT &&
+      f.criteria?.query === FILTER_QUERY &&
       f.action?.addLabelIds?.includes(labelId)
   );
 
@@ -48,7 +48,7 @@ async function getOrCreateFilter(gmail, labelId) {
     userId: 'me',
     requestBody: {
       criteria: {
-        subject: FILTER_SUBJECT,
+        query: FILTER_QUERY,
       },
       action: {
         addLabelIds: [labelId],
@@ -57,13 +57,13 @@ async function getOrCreateFilter(gmail, labelId) {
     },
   });
 
-  console.log(`Filter created — emails with subject "${FILTER_SUBJECT}" will go to "${LABEL_NAME}"`);
+  console.log(`Filter created — emails matching "${FILTER_QUERY}" will go to "${LABEL_NAME}"`);
 }
 
 async function backfillExistingEmails(gmail, labelId) {
   const res = await gmail.users.messages.list({
     userId: 'me',
-    q: `subject:"${FILTER_SUBJECT}"`,
+    q: 'subject:"New Claim" OR subject:Assignment',
     maxResults: 500,
   });
 
